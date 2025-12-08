@@ -99,14 +99,13 @@ def main():
                     print(f"  Warning: Could not get link for {entry.name} - {e}")
                     continue
 
-            # Transform URL to direct download
+            # Transform URL to direct download / view
             # Standard link: https://www.dropbox.com/s/xyz/file.pdf?dl=0
-            # New SCL link:  https://www.dropbox.com/scl/fi/...?rlkey=...&dl=0
+            # raw=1 tells Dropbox to serve the file content directly (inline if possible)
             raw_url = link_metadata.url
-            if 'dl=0' in raw_url:
-                direct_url = raw_url.replace('dl=0', 'dl=1')
-            else:
-                direct_url = raw_url + '&dl=1'
+            # Remove existing params to be safe and append raw=1
+            base_url = raw_url.split('?')[0]
+            direct_url = base_url + '?raw=1'
 
             # Determine type
             ext = entry.name.split('.')[-1].lower()
