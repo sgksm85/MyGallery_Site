@@ -45,8 +45,18 @@ function renderAllPages() {
 
     if (scale === 'page-fit') {
       const viewport = page.getViewport({ scale: 1.0 });
-      const clientWidth = container.clientWidth - 40; // Subtract padding
-      finalScale = clientWidth / viewport.width;
+      const clientWidth = container.clientWidth;
+
+      // Mobile check (simple width check match css media query)
+      const isMobile = window.innerWidth <= 600;
+
+      if (isMobile) {
+        // 100% width for mobile (minus a small padding usually handled by css)
+        finalScale = (clientWidth - 20) / viewport.width;
+      } else {
+        // 80% width for desktop
+        finalScale = (clientWidth * 0.8) / viewport.width;
+      }
       if (finalScale > 1.2) finalScale = 1.2; // Cap max auto-scale
     } else {
       finalScale = scale;
