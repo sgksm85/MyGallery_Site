@@ -4,7 +4,7 @@ const downloadButton = document.getElementById('download');
 const container = document.getElementById('canvas-container');
 
 let pdfDoc = null;
-let scale = 1.0;
+let scale = 'page-fit'; // Default to auto-fit
 
 if (fileUrl) {
   let directUrl = fileUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('&dl=0', '');
@@ -29,33 +29,54 @@ if (fileUrl) {
 }
 
 function renderAllPages() {
-  container.innerHTML = ''; // Clear existing
+  container.innerHTML = '';
 
-  // Create a wrapper for vertical layout
   const wrapper = document.createElement('div');
   wrapper.style.display = 'flex';
   wrapper.style.flexDirection = 'column';
   wrapper.style.gap = '20px';
   wrapper.style.alignItems = 'center';
+  wrapper.style.width = '100%'; // Ensure wrapper takes full width
   container.appendChild(wrapper);
 
-  for (let num = 1; num <= pdfDoc.numPages; num++) {
-    const pageContainer = document.createElement('div');
-    pageContainer.className = 'page-container';
-    pageContainer.style.position = 'relative';
+  // Get first page to calculate auto-scale if needed
+  pdfDoc.getPage(1).then(function (page) {
+    let finalScale = 1.0;
 
-    const canvas = document.createElement('canvas');
-    canvas.id = `page-${num}`;
-    pageContainer.appendChild(canvas);
-    wrapper.appendChild(pageContainer);
+    if (scale === 'page-fit') {
+      const viewport = page.getViewport({ scale: 1.0 });
+      const clientWidth = container.clientWidth - 40; // Subtract padding
+      finalScale = clientWidth / viewport.width;
+      if (finalScale > 1.2) finalScale = 1.2; // Cap max auto-scale
+    } else {
+      finalScale = scale;
+    }
 
-    renderPage(num, canvas);
-  }
+    // Render all pages with the calculated scale
+    for (let num = 1; num <= pdfDoc.numPages; num++) {
+      const pageContainer = document.createElement('div');
+      pageContainer.className = 'page-container';
+      pageContainer.style.position = 'relative';
+
+      const canvas = document.createElement('canvas');
+      canvas.id = `page-${num}`;
+      pageContainer.appendChild(canvas);
+      wrapper.appendChild(pageContainer);
+
+      // We pass the calculated scale explicitly
+      renderPage(num, canvas, finalScale);
+    }
+
+    // Update global scale to the calculated one so zoom in/out works from there
+    if (scale === 'page-fit') {
+      scale = finalScale;
+    }
+  });
 }
 
-function renderPage(num, canvas) {
+function renderPage(num, canvas, currentScale) {
   pdfDoc.getPage(num).then(function (page) {
-    const viewport = page.getViewport({ scale: scale });
+    const viewport = page.getViewport({ scale: currentScale });
     const ctx = canvas.getContext('2d');
 
     canvas.height = viewport.height;
@@ -70,11 +91,16 @@ function renderPage(num, canvas) {
 }
 
 function onZoomIn() {
+  // If scale was still 'page-fit' (should be updated by first render, but safe check)
+  if (typeof scale === 'string') scale = 1.0;
+
   scale += 0.2;
   renderAllPages();
 }
 
 function onZoomOut() {
+  if (typeof scale === 'string') scale = 1.0;
+
   if (scale <= 0.4) return;
   scale -= 0.2;
   renderAllPages();
