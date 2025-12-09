@@ -76,7 +76,7 @@ def main():
             # Skip folders and non-relevant files
             if not isinstance(entry, dropbox.files.FileMetadata):
                 continue
-            if entry.name.startswith('.'):
+            if entry.name.startswith('.') or entry.name.lower().startswith('memo'):
                 continue
 
             print(f"Processing: {entry.name}")
