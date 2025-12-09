@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Viewer</title>
+  <link rel="stylesheet" href="viewer.css">
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Set worker source
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  </script>
+</head>
+<body>
+  <div class="toolbar">
+    <button id="prev">Previous</button>
+    <button id="next">Next</button>
+    <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+    <button id="zoomIn">+</button>
+    <button id="zoomOut">-</button>
+    <a id="download" href="#" target="_blank" class="button">Download</a>
+  </div>
+
+  <div id="canvas-container">
+    <canvas id="the-canvas"></canvas>
+  </div>
+
+  <script src="viewer.js"></script>
+</body>
+</html>

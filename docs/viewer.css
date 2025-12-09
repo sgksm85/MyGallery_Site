@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.toolbar {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.toolbar button,
+.toolbar .button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.toolbar button:hover,
+.toolbar .button:hover {
+  background: #555;
+}
+
+#canvas-container {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /* Ensure top of page is visible */
+  background: #525659;
+  padding: 20px;
+}
+
+canvas {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background: white;
+  /* Ensure flash of white before render looks ok */
+}
+
+@media (max-width: 600px) {
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

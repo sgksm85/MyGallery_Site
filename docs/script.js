@@ -22,7 +22,7 @@ fetch("data.json")
                 <span>${item.type.toUpperCase()}</span>
                 <span>${item.updated || ''}</span>
             </div>
-            <a href="${item.url}" class="card-button" target="_blank">開く</a>
+            <a href="${item.type === 'pdf' ? `viewer.html?file=${encodeURIComponent(item.url)}` : item.url}" class="card-button" target="_blank">開く</a>
         </div>
       `;
 
